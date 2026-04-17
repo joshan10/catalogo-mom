@@ -5,6 +5,11 @@
 
 const WHATSAPP_NUMBER = '573105216032';
 
+// Detect if we're in a subfolder (template/) or at root
+const BASE_PATH = window.location.pathname.includes('/template/') ? '../' : '';
+const PRODUCT_PAGE = `${BASE_PATH}template/producto.html`;
+const HOME_PAGE = `${BASE_PATH}index.html`;
+
 const CATEGORIES = [
   { id: 'todos', label: 'Todos' },
   { id: 'cofres', label: '💎 Cofres de Rosas' },
@@ -232,9 +237,9 @@ function renderProducts(category) {
     : PRODUCTS.filter(p => p.category === category);
 
   grid.innerHTML = filtered.map((p, i) => `
-    <article class="product-card fade-in" style="animation-delay:${i * 0.08}s" onclick="window.location.href='producto.html?id=${p.id}'">
+    <article class="product-card fade-in" style="animation-delay:${i * 0.08}s" onclick="window.location.href='${PRODUCT_PAGE}?id=${p.id}'">
       <div class="product-card-img">
-        <img src="img/${p.images[0]}" alt="${p.name}" loading="lazy" width="400" height="533">
+        <img src="${BASE_PATH}img/${p.images[0]}" alt="${p.name}" loading="lazy" width="400" height="533">
         ${p.badge ? `<span class="product-card-badge">${p.badge}</span>` : ''}
       </div>
       <div class="product-card-body">
@@ -272,13 +277,13 @@ function renderProductDetail() {
 
   container.innerHTML = `
     <div class="container">
-      <a href="index.html" class="back-link">← Volver al catálogo</a>
+      <a href="${HOME_PAGE}" class="back-link">← Volver al catálogo</a>
 
       <div class="product-detail-layout">
         <!-- Gallery -->
         <div class="product-gallery" id="product-gallery">
           <div class="gallery-main">
-            <img id="gallery-main-img" src="img/${product.images[0]}" alt="${product.name}" width="600" height="800">
+            <img id="gallery-main-img" src="${BASE_PATH}img/${product.images[0]}" alt="${product.name}" width="600" height="800">
           </div>
           ${product.images.length > 1 ? `
             <button class="gallery-arrow gallery-arrow--prev" onclick="galleryPrev()" aria-label="Imagen anterior">‹</button>
@@ -291,7 +296,7 @@ function renderProductDetail() {
             <div class="gallery-thumbs">
               ${product.images.map((img, i) => `
                 <button class="gallery-thumb ${i === 0 ? 'active' : ''}" onclick="galleryGoTo(${i})">
-                  <img src="img/${img}" alt="${product.name} vista ${i + 1}" width="56" height="56" loading="lazy">
+                  <img src="${BASE_PATH}img/${img}" alt="${product.name} vista ${i + 1}" width="56" height="56" loading="lazy">
                 </button>
               `).join('')}
             </div>
@@ -334,9 +339,9 @@ function renderProductDetail() {
   const relatedContainer = document.getElementById('related-scroll');
   if (relatedContainer) {
     relatedContainer.innerHTML = related.map(p => `
-      <article class="product-card" onclick="window.location.href='producto.html?id=${p.id}'">
+      <article class="product-card" onclick="window.location.href='${PRODUCT_PAGE}?id=${p.id}'">
         <div class="product-card-img">
-          <img src="img/${p.images[0]}" alt="${p.name}" loading="lazy" width="220" height="293">
+          <img src="${BASE_PATH}img/${p.images[0]}" alt="${p.name}" loading="lazy" width="220" height="293">
         </div>
         <div class="product-card-body">
           <h3 class="product-card-name">${p.name}</h3>
@@ -363,7 +368,7 @@ function galleryGoTo(index) {
   if (mainImg) {
     mainImg.style.opacity = '0';
     setTimeout(() => {
-      mainImg.src = `img/${galleryImages[index]}`;
+      mainImg.src = `${BASE_PATH}img/${galleryImages[index]}`;
       mainImg.style.opacity = '1';
     }, 200);
   }
@@ -433,24 +438,25 @@ function initMobileNav() {
   const toggle = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
   const overlay = document.querySelector('.nav-overlay');
+  const closeBtn = document.querySelector('.nav-close-btn');
 
   if (!toggle || !links) return;
+
+  function closeNav() {
+    links.classList.remove('open');
+    overlay?.classList.remove('open');
+  }
 
   toggle.addEventListener('click', () => {
     links.classList.toggle('open');
     overlay?.classList.toggle('open');
   });
 
-  overlay?.addEventListener('click', () => {
-    links.classList.remove('open');
-    overlay.classList.remove('open');
-  });
+  closeBtn?.addEventListener('click', closeNav);
+  overlay?.addEventListener('click', closeNav);
 
   links.querySelectorAll('a').forEach(a => {
-    a.addEventListener('click', () => {
-      links.classList.remove('open');
-      overlay?.classList.remove('open');
-    });
+    a.addEventListener('click', closeNav);
   });
 }
 

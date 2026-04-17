@@ -221,8 +221,34 @@ h1, h2, h3, h4 {
   transition: var(--transition);
 }
 
+/* Close button inside mobile nav */
+.nav-close-btn {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gris-claro);
+  color: var(--morado-oscuro);
+  font-size: 1.3rem;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+  z-index: 210;
+}
+
+.nav-close-btn:hover {
+  background: var(--rosa-pastel);
+  transform: rotate(90deg);
+}
+
 @media (max-width: 768px) {
   .nav-toggle { display: flex; }
+  .nav-close-btn { display: flex; }
 
   .nav-links {
     position: fixed;
@@ -358,14 +384,10 @@ h1, h2, h3, h4 {
 
 .filter-scroll {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
   padding: 4px 0 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
-
-.filter-scroll::-webkit-scrollbar { display: none; }
 
 .filter-btn {
   flex-shrink: 0;
